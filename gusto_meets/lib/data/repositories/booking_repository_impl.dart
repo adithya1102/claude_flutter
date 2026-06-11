@@ -2,6 +2,7 @@ import '../../core/errors/app_exception.dart';
 import '../../domain/entities/booking_entity.dart';
 import '../../domain/repositories/booking_repository.dart';
 import '../datasources/supabase_booking_source.dart';
+import '../../domain/enums/booking_status.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   final SupabaseBookingSource _source;
@@ -54,7 +55,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'CONFIRMED',
+          status: BookingStatus.confirmed,
         );
       }
       return;
@@ -66,7 +67,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'CONFIRMED',
+          status: BookingStatus.confirmed,
         );
       }
     }
@@ -78,7 +79,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'ACTIVE',
+          status: BookingStatus.active,
         );
       }
       return;
@@ -90,7 +91,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'ACTIVE',
+          status: BookingStatus.active,
         );
       }
     }
@@ -105,8 +106,8 @@ class BookingRepositoryImpl implements BookingRepository {
         final current = _mockBookings[index];
         final updated = current.copyWith(
           endTime: current.endTime.add(Duration(minutes: additionalMinutes)),
-          totalPrice: current.totalPrice + additionalCost,
-          status: 'EXTENDED',
+          totalTimeCost: current.totalTimeCost + additionalCost,
+          status: BookingStatus.extended,
         );
         _mockBookings[index] = updated;
         return updated;
@@ -123,8 +124,8 @@ class BookingRepositoryImpl implements BookingRepository {
         final current = _mockBookings[index];
         final updated = current.copyWith(
           endTime: current.endTime.add(Duration(minutes: additionalMinutes)),
-          totalPrice: current.totalPrice + additionalCost,
-          status: 'EXTENDED',
+          totalTimeCost: current.totalTimeCost + additionalCost,
+          status: BookingStatus.extended,
         );
         _mockBookings[index] = updated;
         return updated;
@@ -139,7 +140,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'COMPLETED',
+          status: BookingStatus.completed,
         );
       }
       return;
@@ -151,7 +152,7 @@ class BookingRepositoryImpl implements BookingRepository {
       final index = _mockBookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
         _mockBookings[index] = _mockBookings[index].copyWith(
-          status: 'COMPLETED',
+          status: BookingStatus.completed,
         );
       }
     }

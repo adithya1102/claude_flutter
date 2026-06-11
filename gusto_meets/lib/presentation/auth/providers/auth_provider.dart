@@ -47,11 +47,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
             id: 'mock-user-1234',
             phoneNumber: phoneNumber,
             fullName: '',
-            activeRole: 'GUEST',
+            activeRole: UserRole.guest,
             walletBalance: 1000.0,
             completedBookings: 0,
             isActive: true,
             kycVerified: true,
+            createdAt: DateTime.now(),
           );
           _ref.read(mockUserProvider.notifier).state = mockUser;
           state = AuthAuthenticated(mockUser);
@@ -65,11 +66,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
           id: 'mock-user-1234',
           phoneNumber: phoneNumber,
           fullName: '',
-          activeRole: 'GUEST',
+          activeRole: UserRole.guest,
           walletBalance: 1000.0,
           completedBookings: 0,
           isActive: true,
           kycVerified: true,
+          createdAt: DateTime.now(),
         );
         _ref.read(mockUserProvider.notifier).state = mockUser;
         state = AuthAuthenticated(mockUser);
@@ -102,11 +104,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
           id: mockUser.id,
           phoneNumber: mockUser.phoneNumber,
           fullName: fullName,
-          activeRole: role.dbValue,
+          activeRole: role,
           walletBalance: mockUser.walletBalance,
           completedBookings: mockUser.completedBookings,
           isActive: mockUser.isActive,
           kycVerified: mockUser.kycVerified,
+          createdAt: mockUser.createdAt,
         );
         _ref.read(mockUserProvider.notifier).state = updated;
         state = AuthAuthenticated(updated);
@@ -128,11 +131,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
           id: id,
           phoneNumber: mockUser?.phoneNumber ?? '',
           fullName: fullName,
-          activeRole: role.dbValue,
+          activeRole: role,
           walletBalance: mockUser?.walletBalance ?? 1000.0,
           completedBookings: mockUser?.completedBookings ?? 0,
           isActive: true,
           kycVerified: true,
+          createdAt: mockUser?.createdAt ?? DateTime.now(),
         );
         _ref.read(mockUserProvider.notifier).state = updated;
         state = AuthAuthenticated(updated);
