@@ -14,11 +14,16 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _phoneController = TextEditingController();
+  final _demoPhoneController = TextEditingController();
+  final _demoOtpController = TextEditingController();
   String? _phoneError;
+  bool _isDemoMode = false;
 
   @override
   void dispose() {
     _phoneController.dispose();
+    _demoPhoneController.dispose();
+    _demoOtpController.dispose();
     super.dispose();
   }
 
@@ -34,6 +39,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
     setState(() => _phoneError = null);
     await ref.read(authProvider.notifier).sendOtp(phone);
+  }
+
+  void _loginDemo() async {
+    final phone = _demoPhoneController.text.trim();
+    final otp = _demoOtpController.text.trim();
+    if (!_isValidPhone(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a valid 10-digit Indian mobile number'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+    if (otp != '1234') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter the test OTP 1234'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+    await ref.read(authProvider.notifier).verifyOtp(phone, otp);
   }
 
   @override
@@ -98,78 +121,143 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 8),
-                    const Text(
-                      'Get started',
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 24),
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      maxLength: 10,
-                      decoration: InputDecoration(
-                        hintText: 'Mobile number',
-                        prefixText: '+91  ',
-                        counterText: '',
-                        errorText: _phoneError,
+                    if (_isDemoMode) ...[
+                      const Text(
+                        'Demo / Connection Test',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    GustoButton(
-                      onPressed: _sendOtp,
-                      label: 'Continue with Phone',
-                      isLoading: authState is AuthLoading,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            'or',
-                            style: TextStyle(color: Colors.grey.shade500),
-                          ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Verify your Supabase connection by signing in with test OTP 1234.',
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: _demoPhoneController,
+                        keyboardType: TextInputType.phone,
+                        maxLength: 10,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Mobile Number',
+                          prefixText: '+91  ',
+                          counterText: '',
+                          errorText: _phoneError,
                         ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    OutlinedButton(
-                      onPressed: () =>
-                          ref.read(authProvider.notifier).signInWithGoogle(),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14)),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _demoOtpController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter OTP (1234)',
+                          counterText: '',
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      GustoButton(
+                        onPressed: _loginDemo,
+                        label: 'Verify & Login (Demo)',
+                        isLoading: authState is AuthLoading,
+                      ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isDemoMode = false;
+                              _phoneError = null;
+                            });
+                          },
+                          child: const Text('Back to standard login'),
+                        ),
+                      ),
+                    ] else ...[
+                      const Text(
+                        'Get started',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        maxLength: 10,
+                        decoration: InputDecoration(
+                          hintText: 'Mobile number',
+                          prefixText: '+91  ',
+                          counterText: '',
+                          errorText: _phoneError,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      GustoButton(
+                        onPressed: _sendOtp,
+                        label: 'Continue with Phone',
+                        isLoading: authState is AuthLoading,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
                         children: [
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4285F4),
-                              shape: BoxShape.circle,
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'or',
+                              style: TextStyle(color: Colors.grey.shade500),
                             ),
-                            child: const Center(
-                              child: Text(
-                                'G',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        onPressed: () =>
+                            ref.read(authProvider.notifier).signInWithGoogle(),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 52),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 24,
+                              height: 24,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF4285F4),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'G',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text('Continue with Google'),
-                        ],
+                            const SizedBox(width: 12),
+                            const Text('Continue with Google'),
+                          ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isDemoMode = true;
+                              _phoneError = null;
+                            });
+                          },
+                          child: const Text('Demo / Connection Test (OTP: 1234)'),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     Center(
                       child: Text(

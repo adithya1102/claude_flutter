@@ -58,8 +58,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   String get _otp => _controllers.map((c) => c.text).join();
 
   void _verify() {
-    if (_otp.length == 6) {
-      ref.read(authProvider.notifier).verifyOtp(widget.phone, _otp);
+    final otpText = _otp.trim();
+    if (otpText.length == 6 || otpText == '1234') {
+      ref.read(authProvider.notifier).verifyOtp(widget.phone, otpText);
     }
   }
 
@@ -134,7 +135,10 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                       if (val.isEmpty && i > 0) {
                         _focusNodes[i - 1].requestFocus();
                       }
-                      if (_otp.length == 6) _verify();
+                      final currentOtp = _otp.trim();
+                      if (currentOtp.length == 6 || currentOtp == '1234') {
+                        _verify();
+                      }
                     },
                   ),
                 );
@@ -142,7 +146,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             ),
             const SizedBox(height: 32),
             GustoButton(
-              onPressed: _otp.length == 6 ? _verify : null,
+              onPressed: (_otp.trim().length == 6 || _otp.trim() == '1234') ? _verify : null,
               label: 'Verify OTP',
               isLoading: authState is AuthLoading,
             ),
