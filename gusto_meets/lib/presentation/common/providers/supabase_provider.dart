@@ -43,7 +43,19 @@ final bookingRepoProvider = Provider<BookingRepositoryImpl>(
 final walletRepoProvider = Provider<WalletRepositoryImpl>(
     (ref) => WalletRepositoryImpl(ref.watch(walletSourceProvider)));
 
+final mockUserProvider = StateProvider<UserEntity?>((ref) => null);
+
 final authStateProvider = StreamProvider<User?>((ref) {
+  final mockUser = ref.watch(mockUserProvider);
+  if (mockUser != null) {
+    return Stream.value(User(
+      id: mockUser.id,
+      appMetadata: const {},
+      userMetadata: {'full_name': mockUser.fullName},
+      aud: 'authenticated',
+      createdAt: DateTime.now().toIso8601String(),
+    ));
+  }
   return ref
       .watch(supabaseClientProvider)
       .auth
@@ -52,6 +64,9 @@ final authStateProvider = StreamProvider<User?>((ref) {
 });
 
 final currentUserProvider = FutureProvider<UserEntity?>((ref) async {
+  final mockUser = ref.watch(mockUserProvider);
+  if (mockUser != null) return mockUser;
+
   final authUser = ref.watch(authStateProvider).value;
   if (authUser == null) return null;
   return ref.watch(authRepoProvider).getCurrentUser();
