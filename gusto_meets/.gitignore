@@ -1,0 +1,48 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# Android
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/key.properties
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# Generated code
+lib/core/env/env.g.dart
+*.g.dart
+*.freezed.dart
+
+# Environment
+.env
+
+# Build artifacts
+*.apk
+*.ipa
+*.app
+
+# macOS
+.DS_Store
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
